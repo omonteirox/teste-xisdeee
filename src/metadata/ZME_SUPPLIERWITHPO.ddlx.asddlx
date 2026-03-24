@@ -1,0 +1,634 @@
+@Metadata.layer: #CUSTOMER
+annotate view ZC_SupplierWithPO with
+{
+
+// ─── Header Info ──────────────────────────────────────────────────────────────
+  @UI.headerInfo: {
+    typeName:       'Pedido de Compra',
+    typeNamePlural: 'Pedidos de Compra',
+    title:       { type: #STANDARD, value: 'PurchaseOrder' },
+    description: { type: #STANDARD, value: 'SupplierName'  }
+  }
+
+// ─── Data Points (header do Object Page) ─────────────────────────────────────
+
+  @UI.dataPoint #DPStatus: {
+    title:       'Status',
+    criticality: 'POStatusCriticality'
+  }
+  @UI.dataPoint #DPIsCustomer: {
+    title:       'É Também Cliente?',
+    criticality: 'IsAlsoCustomerCritclty'
+  }
+  @UI.dataPoint #DPCompanyCode: {
+    title: 'Empresa'
+  }
+  @UI.dataPoint #DPPurchOrg: {
+    title: 'Org. de Compras'
+  }
+  @UI.dataPoint #DPPODate: {
+    title: 'Data do Pedido'
+  }
+  @UI.dataPoint #DPCurrency: {
+    title: 'Moeda'
+  }
+
+// ─── Facets ───────────────────────────────────────────────────────────────────
+
+  @UI.facet: [
+    // ── Header data points ──────────────────────────────────────────
+    { id: 'HFStatus',     purpose: #HEADER, type: #DATAPOINT_REFERENCE,
+      targetQualifier: 'DPStatus',      position: 10 },
+    { id: 'HFIsCustomer', purpose: #HEADER, type: #DATAPOINT_REFERENCE,
+      targetQualifier: 'DPIsCustomer',  position: 20 },
+    { id: 'HFCompCode',   purpose: #HEADER, type: #DATAPOINT_REFERENCE,
+      targetQualifier: 'DPCompanyCode', position: 30 },
+    { id: 'HFPurchOrg',   purpose: #HEADER, type: #DATAPOINT_REFERENCE,
+      targetQualifier: 'DPPurchOrg',    position: 40 },
+    { id: 'HFPODate',     purpose: #HEADER, type: #DATAPOINT_REFERENCE,
+      targetQualifier: 'DPPODate',      position: 50 },
+    { id: 'HFCurrency',   purpose: #HEADER, type: #DATAPOINT_REFERENCE,
+      targetQualifier: 'DPCurrency',    position: 60 },
+
+    // ── Facet 1: Dados do Pedido ─────────────────────────────────────
+    { id: 'FacetPO',      type: #COLLECTION,
+      label: 'Dados do Pedido',         position: 10 },
+    { id: 'FGPOMain',     type: #FIELDGROUP_REFERENCE,
+      targetQualifier: 'FGPOMain',      parentId: 'FacetPO',
+      label: 'Informações Gerais',      position: 10 },
+    { id: 'FGPOStatus',   type: #FIELDGROUP_REFERENCE,
+      targetQualifier: 'FGPOStatus',    parentId: 'FacetPO',
+      label: 'Status e Liberação',      position: 20 },
+    { id: 'FGPOInco',     type: #FIELDGROUP_REFERENCE,
+      targetQualifier: 'FGPOInco',      parentId: 'FacetPO',
+      label: 'Incoterms',               position: 30 },
+    { id: 'FGPOExch',     type: #FIELDGROUP_REFERENCE,
+      targetQualifier: 'FGPOExch',      parentId: 'FacetPO',
+      label: 'Câmbio e Validade',       position: 40 },
+    { id: 'FGPOCompl',    type: #FIELDGROUP_REFERENCE,
+      targetQualifier: 'FGPOCompl',     parentId: 'FacetPO',
+      label: 'Conformidade',            position: 50 },
+
+    // ── Facet 2: Referências e Pagamento ─────────────────────────────
+    { id: 'FacetRef',     type: #COLLECTION,
+      label: 'Referências e Pagamento', position: 20 },
+    { id: 'FGRefMain',    type: #FIELDGROUP_REFERENCE,
+      targetQualifier: 'FGRefMain',     parentId: 'FacetRef',
+      label: 'Referências',             position: 10 },
+    { id: 'FGRefPay',     type: #FIELDGROUP_REFERENCE,
+      targetQualifier: 'FGRefPay',      parentId: 'FacetRef',
+      label: 'Descontos e Pagamento',   position: 20 },
+    { id: 'FGRefDown',    type: #FIELDGROUP_REFERENCE,
+      targetQualifier: 'FGRefDown',     parentId: 'FacetRef',
+      label: 'Adiantamento',            position: 30 },
+    { id: 'FGRefFiscal',  type: #FIELDGROUP_REFERENCE,
+      targetQualifier: 'FGRefFiscal',   parentId: 'FacetRef',
+      label: 'Fiscal',                  position: 40 },
+
+    // ── Facet 3: Dados do Fornecedor ──────────────────────────────────
+    { id: 'FacetSupp',    type: #COLLECTION,
+      label: 'Dados do Fornecedor',     position: 30 },
+    { id: 'FGSuppId',     type: #FIELDGROUP_REFERENCE,
+      targetQualifier: 'FGSuppId',      parentId: 'FacetSupp',
+      label: 'Identificação',           position: 10 },
+    { id: 'FGSuppAddr',   type: #FIELDGROUP_REFERENCE,
+      targetQualifier: 'FGSuppAddr',    parentId: 'FacetSupp',
+      label: 'Endereço',                position: 20 },
+    { id: 'FGSuppContact',type: #FIELDGROUP_REFERENCE,
+      targetQualifier: 'FGSuppContact', parentId: 'FacetSupp',
+      label: 'Contato',                 position: 30 },
+    { id: 'FGSuppFiscal', type: #FIELDGROUP_REFERENCE,
+      targetQualifier: 'FGSuppFiscal',  parentId: 'FacetSupp',
+      label: 'Fiscal',                  position: 40 },
+    { id: 'FGSuppBlock',  type: #FIELDGROUP_REFERENCE,
+      targetQualifier: 'FGSuppBlock',   parentId: 'FacetSupp',
+      label: 'Bloqueios',               position: 50 },
+    { id: 'FGSuppLogist', type: #FIELDGROUP_REFERENCE,
+      targetQualifier: 'FGSuppLogist',  parentId: 'FacetSupp',
+      label: 'Logística',               position: 60 },
+    { id: 'FGSuppConfig', type: #FIELDGROUP_REFERENCE,
+      targetQualifier: 'FGSuppConfig',  parentId: 'FacetSupp',
+      label: 'Configurações',           position: 70 },
+
+    // ── Facet 4: Dados do Cliente ──────────────────────────────────────
+    { id: 'FacetCust',    type: #COLLECTION,
+      label: 'Dados do Cliente',        position: 40 },
+    { id: 'FGCustId',     type: #FIELDGROUP_REFERENCE,
+      targetQualifier: 'FGCustId',      parentId: 'FacetCust',
+      label: 'Identificação',           position: 10 },
+    { id: 'FGCustAddr',   type: #FIELDGROUP_REFERENCE,
+      targetQualifier: 'FGCustAddr',    parentId: 'FacetCust',
+      label: 'Endereço',                position: 20 },
+    { id: 'FGCustBlock',  type: #FIELDGROUP_REFERENCE,
+      targetQualifier: 'FGCustBlock',   parentId: 'FacetCust',
+      label: 'Bloqueios',               position: 30 },
+    { id: 'FGCustSales',  type: #FIELDGROUP_REFERENCE,
+      targetQualifier: 'FGCustSales',   parentId: 'FacetCust',
+      label: 'Vendas',                  position: 40 },
+    { id: 'FGCustAttr',   type: #FIELDGROUP_REFERENCE,
+      targetQualifier: 'FGCustAttr',    parentId: 'FacetCust',
+      label: 'Atributos Livres',        position: 50 }
+  ]
+
+// ─── Line Items (List Report) ─────────────────────────────────────────────────
+
+  @UI.lineItem: [{ position: 10, label: 'Fornecedor' }]
+  Supplier;
+
+  @UI.lineItem: [{ position: 20, label: 'Nome do Fornecedor' }]
+  SupplierName;
+
+  @UI.lineItem: [{ position: 30, label: 'É Também Cliente?',
+                   criticality: 'IsAlsoCustomerCritclty',
+                   criticalityRepresentation: #WITH_ICON }]
+  IsAlsoCustomer;
+
+  @UI.lineItem: [{ position: 40, label: 'Pedido de Compra' }]
+  PurchaseOrder;
+
+  @UI.lineItem: [{ position: 50, label: 'Data do Pedido' }]
+  PurchaseOrderDate;
+
+  @UI.lineItem: [{ position: 60, label: 'Tipo' }]
+  PurchaseOrderType;
+
+  @UI.lineItem: [{ position: 70, label: 'Empresa' }]
+  CompanyCode;
+
+  @UI.lineItem: [{ position: 80, label: 'Org. de Compras' }]
+  PurchasingOrganization;
+
+  @UI.lineItem: [{ position: 90, label: 'Grupo de Compras',
+                   importance: #LOW }]
+  PurchasingGroup;
+
+  @UI.lineItem: [{ position: 100, label: 'Moeda' }]
+  DocumentCurrency;
+
+  @UI.lineItem: [{ position: 110, label: 'Status',
+                   criticality: 'POStatusCriticality',
+                   criticalityRepresentation: #WITH_ICON }]
+  PurchasingProcessingStatus;
+
+  @UI.lineItem: [{ position: 120, label: 'Completude',
+                   criticality: 'POStatusCriticality',
+                   criticalityRepresentation: #WITHOUT_ICON }]
+  PurchasingCompletenessStatus;
+
+  @UI.lineItem: [{ position: 130, label: 'Data de Criação',
+                   importance: #LOW }]
+  CreationDate;
+
+  @UI.lineItem: [{ position: 140, label: 'Criado Por',
+                   importance: #LOW }]
+  CreatedByUser;
+
+// ─── Selection Fields (filtros) ───────────────────────────────────────────────
+
+  @UI.selectionField: [{ position: 10 }]
+  CompanyCode;
+
+  @UI.selectionField: [{ position: 20 }]
+  PurchaseOrderDate;
+
+  @UI.selectionField: [{ position: 30 }]
+  PurchasingOrganization;
+
+  @UI.selectionField: [{ position: 40 }]
+  Supplier;
+
+  @UI.selectionField: [{ position: 50 }]
+  PurchaseOrderType;
+
+// ─── Data Points (campos anotados) ───────────────────────────────────────────
+
+  @UI.dataPoint #DPStatus:
+  PurchasingProcessingStatus;
+
+  @UI.dataPoint #DPIsCustomer:
+  IsAlsoCustomer;
+
+  @UI.dataPoint #DPCompanyCode:
+  CompanyCode;
+
+  @UI.dataPoint #DPPurchOrg:
+  PurchasingOrganization;
+
+  @UI.dataPoint #DPPODate:
+  PurchaseOrderDate;
+
+  @UI.dataPoint #DPCurrency:
+  DocumentCurrency;
+
+// ─── Field Groups — Facet 1: Dados do Pedido ─────────────────────────────────
+
+  @UI.fieldGroup: [{ qualifier: 'FGPOMain', position: 10,  label: 'Tipo' }]
+  PurchaseOrderType;
+  @UI.fieldGroup: [{ qualifier: 'FGPOMain', position: 20,  label: 'Subtipo' }]
+  PurchaseOrderSubtype;
+  @UI.fieldGroup: [{ qualifier: 'FGPOMain', position: 30,  label: 'Empresa' }]
+  CompanyCode;
+  @UI.fieldGroup: [{ qualifier: 'FGPOMain', position: 40,  label: 'Org. de Compras' }]
+  PurchasingOrganization;
+  @UI.fieldGroup: [{ qualifier: 'FGPOMain', position: 50,  label: 'Grupo de Compras' }]
+  PurchasingGroup;
+  @UI.fieldGroup: [{ qualifier: 'FGPOMain', position: 60,  label: 'Fornecedor' }]
+  Supplier;
+  @UI.fieldGroup: [{ qualifier: 'FGPOMain', position: 70,  label: 'Data do Pedido' }]
+  PurchaseOrderDate;
+  @UI.fieldGroup: [{ qualifier: 'FGPOMain', position: 80,  label: 'Data de Criação' }]
+  CreationDate;
+  @UI.fieldGroup: [{ qualifier: 'FGPOMain', position: 90,  label: 'Criado Por' }]
+  CreatedByUser;
+  @UI.fieldGroup: [{ qualifier: 'FGPOMain', position: 100, label: 'Última Alteração' }]
+  LastChangeDateTime;
+  @UI.fieldGroup: [{ qualifier: 'FGPOMain', position: 110, label: 'Moeda' }]
+  DocumentCurrency;
+  @UI.fieldGroup: [{ qualifier: 'FGPOMain', position: 120, label: 'Valor Total Liberado' }]
+  PurgReleaseTimeTotalAmount;
+  @UI.fieldGroup: [{ qualifier: 'FGPOMain', position: 130, label: 'Cond. de Pagamento' }]
+  PaymentTerms;
+  @UI.fieldGroup: [{ qualifier: 'FGPOMain', position: 140, label: 'Origem' }]
+  PurchasingDocumentOrigin;
+  @UI.fieldGroup: [{ qualifier: 'FGPOMain', position: 150, label: 'Idioma' }]
+  Language;
+  @UI.fieldGroup: [{ qualifier: 'FGPOMain', position: 160, label: 'Vendedor Responsável' }]
+  SupplierRespSalesPersonName;
+  @UI.fieldGroup: [{ qualifier: 'FGPOMain', position: 170, label: 'Telefone Fornecedor' }]
+  SupplierPhoneNumber;
+  @UI.fieldGroup: [{ qualifier: 'FGPOMain', position: 180, label: 'Parte Faturante' }]
+  InvoicingParty;
+  @UI.fieldGroup: [{ qualifier: 'FGPOMain', position: 190, label: 'Centro Fornecedor' }]
+  SupplyingPlant;
+
+  @UI.fieldGroup: [{ qualifier: 'FGPOStatus', position: 10,  label: 'Status Processamento',
+                     criticality: 'POStatusCriticality' }]
+  PurchasingProcessingStatus;
+  @UI.fieldGroup: [{ qualifier: 'FGPOStatus', position: 20,  label: 'Completude',
+                     criticality: 'POStatusCriticality' }]
+  PurchasingCompletenessStatus;
+  @UI.fieldGroup: [{ qualifier: 'FGPOStatus', position: 30,  label: 'Liberação Incompleta' }]
+  ReleaseIsNotCompleted;
+  @UI.fieldGroup: [{ qualifier: 'FGPOStatus', position: 40,  label: 'Status Liberação' }]
+  PurgReleaseSequenceStatus;
+  @UI.fieldGroup: [{ qualifier: 'FGPOStatus', position: 50,  label: 'Código de Liberação' }]
+  ReleaseCode;
+  @UI.fieldGroup: [{ qualifier: 'FGPOStatus', position: 60,  label: 'Indicador de Exclusão' }]
+  PurchasingDocumentDeletionCode;
+  @UI.fieldGroup: [{ qualifier: 'FGPOStatus', position: 70,  label: 'Motivo Cancelamento' }]
+  PurgReasonForDocCancellation;
+
+  @UI.fieldGroup: [{ qualifier: 'FGPOInco', position: 10, label: 'Incoterms' }]
+  IncotermsClassification;
+  @UI.fieldGroup: [{ qualifier: 'FGPOInco', position: 20, label: 'Local Transferência' }]
+  IncotermsTransferLocation;
+  @UI.fieldGroup: [{ qualifier: 'FGPOInco', position: 30, label: 'Versão Incoterms' }]
+  IncotermsVersion;
+  @UI.fieldGroup: [{ qualifier: 'FGPOInco', position: 40, label: 'Local Incoterms 1' }]
+  IncotermsLocation1;
+  @UI.fieldGroup: [{ qualifier: 'FGPOInco', position: 50, label: 'Local Incoterms 2' }]
+  IncotermsLocation2;
+
+  @UI.fieldGroup: [{ qualifier: 'FGPOExch', position: 10, label: 'Taxa de Câmbio' }]
+  ExchangeRate;
+  @UI.fieldGroup: [{ qualifier: 'FGPOExch', position: 20, label: 'Taxa Fixa' }]
+  ExchangeRateIsFixed;
+  @UI.fieldGroup: [{ qualifier: 'FGPOExch', position: 30, label: 'Início Vigência' }]
+  ValidityStartDate;
+  @UI.fieldGroup: [{ qualifier: 'FGPOExch', position: 40, label: 'Fim Vigência' }]
+  ValidityEndDate;
+  @UI.fieldGroup: [{ qualifier: 'FGPOExch', position: 50, label: 'Esquema de Preços' }]
+  PricingProcedure;
+  @UI.fieldGroup: [{ qualifier: 'FGPOExch', position: 60, label: 'Documento de Preços' }]
+  PricingDocument;
+
+  @UI.fieldGroup: [{ qualifier: 'FGPOCompl', position: 10, label: 'Conformidade Produto' }]
+  PurgAggrgdProdCmplncSuplrSts;
+  @UI.fieldGroup: [{ qualifier: 'FGPOCompl', position: 20, label: 'Comercialização' }]
+  PurgAggrgdProdMarketabilitySts;
+  @UI.fieldGroup: [{ qualifier: 'FGPOCompl', position: 30, label: 'Ficha de Segurança' }]
+  PurgAggrgdSftyDataSheetStatus;
+  @UI.fieldGroup: [{ qualifier: 'FGPOCompl', position: 40, label: 'Produtos Perigosos' }]
+  PurgProdCmplncTotDngrsGoodsSts;
+  @UI.fieldGroup: [{ qualifier: 'FGPOCompl', position: 50, label: 'Relevante Intrastat' }]
+  IsIntrastatReportingRelevant;
+  @UI.fieldGroup: [{ qualifier: 'FGPOCompl', position: 60, label: 'Excluído Intrastat' }]
+  IsIntrastatReportingExcluded;
+
+// ─── Field Groups — Facet 2: Referências e Pagamento ─────────────────────────
+
+  @UI.fieldGroup: [{ qualifier: 'FGRefMain', position: 10, label: 'Nº Cotação Fornecedor' }]
+  SupplierQuotationExternalID;
+  @UI.fieldGroup: [{ qualifier: 'FGRefMain', position: 20, label: 'Referência Externa' }]
+  CorrespncExternalReference;
+  @UI.fieldGroup: [{ qualifier: 'FGRefMain', position: 30, label: 'Referência Interna' }]
+  CorrespncInternalReference;
+  @UI.fieldGroup: [{ qualifier: 'FGRefMain', position: 40, label: 'Endereço Manual Forn.' }]
+  ManualSupplierAddressID;
+
+  @UI.fieldGroup: [{ qualifier: 'FGRefPay', position: 10, label: 'Dias Desconto 1' }]
+  CashDiscount1Days;
+  @UI.fieldGroup: [{ qualifier: 'FGRefPay', position: 20, label: '% Desconto 1' }]
+  CashDiscount1Percent;
+  @UI.fieldGroup: [{ qualifier: 'FGRefPay', position: 30, label: 'Dias Desconto 2' }]
+  CashDiscount2Days;
+  @UI.fieldGroup: [{ qualifier: 'FGRefPay', position: 40, label: '% Desconto 2' }]
+  CashDiscount2Percent;
+  @UI.fieldGroup: [{ qualifier: 'FGRefPay', position: 50, label: 'Dias Pagamento Líquido' }]
+  NetPaymentDays;
+
+  @UI.fieldGroup: [{ qualifier: 'FGRefDown', position: 10, label: 'Tipo Adiantamento' }]
+  DownPaymentType;
+  @UI.fieldGroup: [{ qualifier: 'FGRefDown', position: 20, label: '% Adiantamento' }]
+  DownPaymentPercentageOfTotAmt;
+  @UI.fieldGroup: [{ qualifier: 'FGRefDown', position: 30, label: 'Valor Adiantamento' }]
+  DownPaymentAmount;
+  @UI.fieldGroup: [{ qualifier: 'FGRefDown', position: 40, label: 'Vencimento Adiantamento' }]
+  DownPaymentDueDate;
+
+  @UI.fieldGroup: [{ qualifier: 'FGRefFiscal', position: 10, label: 'CNPJ/IE (NF)' }]
+  POVATRegistration;
+  @UI.fieldGroup: [{ qualifier: 'FGRefFiscal', position: 20, label: 'País Declaração Fiscal' }]
+  TaxReturnCountry;
+  @UI.fieldGroup: [{ qualifier: 'FGRefFiscal', position: 30, label: 'País CNPJ' }]
+  VATRegistrationCountry;
+  @UI.fieldGroup: [{ qualifier: 'FGRefFiscal', position: 40, label: 'Fornecedor Supridor' }]
+  SupplyingSupplier;
+
+// ─── Field Groups — Facet 3: Dados do Fornecedor ─────────────────────────────
+
+  @UI.fieldGroup: [{ qualifier: 'FGSuppId', position: 10, label: 'Fornecedor' }]
+  Supplier;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppId', position: 20, label: 'Nome' }]
+  SupplierName;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppId', position: 30, label: 'Nome Completo' }]
+  SupplierFullName;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppId', position: 40, label: 'Grupo de Contas' }]
+  SupplierAccountGroup;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppId', position: 50, label: 'Grupo Corporativo' }]
+  SupplierCorporateGroup;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppId', position: 60, label: 'Setor' }]
+  SupplierIndustry;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppId', position: 70, label: 'Tipo de Setor' }]
+  SupplierIndustryType;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppId', position: 80, label: 'Tipo de Negócio' }]
+  SupplierBusinessType;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppId', position: 90, label: 'Conta Transitória' }]
+  SupplierIsOneTimeAccount;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppId', position: 100, label: 'Pessoa Física' }]
+  IsNaturalPerson;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppId', position: 110, label: 'Data Nascimento' }]
+  BirthDate;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppId', position: 120, label: 'Nº Cliente (BP Dual)' }]
+  SupplierCustomerNumber;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppId', position: 130, label: 'É Também Cliente?',
+                     criticality: 'IsAlsoCustomerCritclty' }]
+  IsAlsoCustomer;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppId', position: 140, label: 'Idioma' }]
+  SupplierLanguage;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppId', position: 150, label: 'Campo Classificação' }]
+  SupplierSortField;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppId', position: 160, label: 'Parceiro Comercial' }]
+  SupplierTradingPartner;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppId', position: 170, label: 'Grupo Contas Ref.' }]
+  ReferenceAccountGroup;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppId', position: 180, label: 'Profissão' }]
+  SupplierProfession;
+
+  @UI.fieldGroup: [{ qualifier: 'FGSuppAddr', position: 10, label: 'País' }]
+  SupplierCountry;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppAddr', position: 20, label: 'Estado' }]
+  SupplierRegion;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppAddr', position: 30, label: 'Cidade' }]
+  SupplierCityName;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppAddr', position: 40, label: 'CEP' }]
+  SupplierPostalCode;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppAddr', position: 50, label: 'Logradouro' }]
+  SupplierStreetName;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppAddr', position: 60, label: 'Bairro' }]
+  SupplierDistrictName;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppAddr', position: 70, label: 'Razão Social 1' }]
+  SupplierOrgBPName1;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppAddr', position: 80, label: 'Razão Social 2' }]
+  SupplierOrgBPName2;
+
+  @UI.fieldGroup: [{ qualifier: 'FGSuppContact', position: 10, label: 'Telefone 1' }]
+  SupplierPhoneNumber1;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppContact', position: 20, label: 'Telefone 2' }]
+  SupplierPhoneNumber2;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppContact', position: 30, label: 'Fax' }]
+  SupplierFaxNumber;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppContact', position: 40, label: 'Cred. Alternativo' }]
+  AlternativePayeeAccountNumber;
+
+  @UI.fieldGroup: [{ qualifier: 'FGSuppFiscal', position: 10, label: 'CNPJ/CPF' }]
+  SupplierVATRegistration;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppFiscal', position: 20, label: 'Nº Fiscal 1' }]
+  SupplierTaxNumber1;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppFiscal', position: 30, label: 'Nº Fiscal 2' }]
+  SupplierTaxNumber2;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppFiscal', position: 40, label: 'Nº Fiscal 3' }]
+  SupplierTaxNumber3;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppFiscal', position: 50, label: 'Nº Fiscal 4' }]
+  SupplierTaxNumber4;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppFiscal', position: 60, label: 'Jurisdição Fiscal' }]
+  SupplierTaxJurisdiction;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppFiscal', position: 70, label: 'Endereço Fiscal' }]
+  SupplierFiscalAddress;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppFiscal', position: 80, label: 'Obrigação IVA' }]
+  SupplierVATLiability;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppFiscal', position: 90, label: 'Imposto Split (BR)' }]
+  BR_TaxIsSplit;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppFiscal', position: 100, label: 'Base Trib. (BR)' }]
+  BRSpcfcTaxBasePercentageCode;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppFiscal', position: 110, label: 'Motivo de Pagamento' }]
+  SupplierPaymentReason;
+
+  @UI.fieldGroup: [{ qualifier: 'FGSuppBlock', position: 10, label: 'Bloq. Contabilização' }]
+  SupplierPostingIsBlocked;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppBlock', position: 20, label: 'Bloqueado Compras' }]
+  PurchasingIsBlocked;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppBlock', position: 30, label: 'Pagamento Bloqueado' }]
+  PaymentIsBlockedForSupplier;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppBlock', position: 40, label: 'Bloqueio Procurement' }]
+  SupplierProcurementBlock;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppBlock', position: 50, label: 'Indicador Exclusão' }]
+  SupplierDeletionIndicator;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppBlock', position: 60, label: 'Bloq. Exclusão Central' }]
+  SupplierCentralDeletionIsBlock;
+
+  @UI.fieldGroup: [{ qualifier: 'FGSuppLogist', position: 10, label: 'Centro Fornecedor' }]
+  SupplierPlant;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppLogist', position: 20, label: 'Cadeia de Transporte' }]
+  SupplierTransportationChain;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppLogist', position: 30, label: 'Tempo Preparação (d)' }]
+  SupplierStagingTimeInDays;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppLogist', position: 40, label: 'Proc. Planejamento' }]
+  SupplierSchedulingProcedure;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppLogist', position: 50, label: 'Grupo Frete Agente' }]
+  SupplierFwdAgentFreightGroup;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppLogist', position: 60, label: 'Transportadora' }]
+  SupplierStandardCarrierAccess;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppLogist', position: 70, label: 'Conf. Transportadora' }]
+  SuplrCarrierConfirmIsExpected;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppLogist', position: 80, label: 'Comprovante Entrega' }]
+  SuplrProofOfDelivRlvtCode;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppLogist', position: 90, label: 'Calendário Fábrica' }]
+  FactoryCalendar;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppLogist', position: 100, label: 'Sis. Gestão Qualidade' }]
+  SuplrQualityManagementSystem;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppLogist', position: 110, label: 'Validade Certificação' }]
+  SuplrQltyInProcmtCertfnValidTo;
+
+  @UI.fieldGroup: [{ qualifier: 'FGSuppConfig', position: 10, label: 'Criado Por' }]
+  SupplierCreatedByUser;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppConfig', position: 20, label: 'Data de Criação' }]
+  SupplierCreationDate;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppConfig', position: 30, label: 'Finalidade Concluída' }]
+  SuplrIsBusPurpCompleted;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppConfig', position: 40, label: 'Tipo Responsável' }]
+  SupplierResponsibleType;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppConfig', position: 50, label: 'Tipo Nº Fiscal' }]
+  SupplierTaxNumberType;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppConfig', position: 60, label: 'Aceite na Origem' }]
+  IsToBeAcceptedAtOrigin;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppConfig', position: 70, label: 'Sujeito Tributação' }]
+  BPIsEqualizationTaxSubject;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppConfig', position: 80, label: 'Numeração Coletiva' }]
+  CollectiveNumberingIsRelevant;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppConfig', position: 90, label: 'Troca de Dados' }]
+  SupplierDataMedExchInd;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppConfig', position: 100, label: 'Número PAN' }]
+  BusinessPartnerPanNumber;
+  @UI.fieldGroup: [{ qualifier: 'FGSuppConfig', position: 110, label: 'Validade PAN' }]
+  BPPanValidFromDate;
+
+// ─── Field Groups — Facet 4: Dados do Cliente ────────────────────────────────
+
+  @UI.fieldGroup: [{ qualifier: 'FGCustId', position: 10, label: 'Cliente' }]
+  CustomerNumber;
+  @UI.fieldGroup: [{ qualifier: 'FGCustId', position: 20, label: 'Nome do Cliente' }]
+  CustomerName;
+  @UI.fieldGroup: [{ qualifier: 'FGCustId', position: 30, label: 'Nome Completo' }]
+  CustomerFullName;
+  @UI.fieldGroup: [{ qualifier: 'FGCustId', position: 40, label: 'Grupo de Contas' }]
+  CustomerAccountGroup;
+  @UI.fieldGroup: [{ qualifier: 'FGCustId', position: 50, label: 'Classificação' }]
+  CustomerClassification;
+  @UI.fieldGroup: [{ qualifier: 'FGCustId', position: 60, label: 'Grupo Corporativo' }]
+  CustomerCorporateGroup;
+  @UI.fieldGroup: [{ qualifier: 'FGCustId', position: 70, label: 'Setor' }]
+  CustomerIndustry;
+  @UI.fieldGroup: [{ qualifier: 'FGCustId', position: 80, label: 'Tipo de Negócio' }]
+  CustomerBusinessType;
+  @UI.fieldGroup: [{ qualifier: 'FGCustId', position: 90, label: 'É Prospect' }]
+  IsSalesProspect;
+  @UI.fieldGroup: [{ qualifier: 'FGCustId', position: 100, label: 'É Concorrente' }]
+  IsCompetitor;
+  @UI.fieldGroup: [{ qualifier: 'FGCustId', position: 110, label: 'É Consumidor Final' }]
+  IsConsumer;
+  @UI.fieldGroup: [{ qualifier: 'FGCustId', position: 120, label: 'Nº Fornecedor (BP Dual)' }]
+  CustomerSupplierNumber;
+  @UI.fieldGroup: [{ qualifier: 'FGCustId', position: 130, label: 'CNPJ/CPF' }]
+  CustomerVATRegistration;
+  @UI.fieldGroup: [{ qualifier: 'FGCustId', position: 140, label: 'Nº Fiscal 1' }]
+  CustomerTaxNumber1;
+  @UI.fieldGroup: [{ qualifier: 'FGCustId', position: 150, label: 'Nº Fiscal 2' }]
+  CustomerTaxNumber2;
+  @UI.fieldGroup: [{ qualifier: 'FGCustId', position: 160, label: 'Criado Por' }]
+  CustomerCreatedByUser;
+  @UI.fieldGroup: [{ qualifier: 'FGCustId', position: 170, label: 'Data de Criação' }]
+  CustomerCreationDate;
+  @UI.fieldGroup: [{ qualifier: 'FGCustId', position: 180, label: 'Tipo Contrib. ICMS (BR)' }]
+  BR_ICMSTaxPayerType;
+  @UI.fieldGroup: [{ qualifier: 'FGCustId', position: 190, label: 'Código SUFRAMA (BR)' }]
+  BR_SUFRAMACode;
+
+  @UI.fieldGroup: [{ qualifier: 'FGCustAddr', position: 10, label: 'País' }]
+  CustomerCountry;
+  @UI.fieldGroup: [{ qualifier: 'FGCustAddr', position: 20, label: 'Estado' }]
+  CustomerRegion;
+  @UI.fieldGroup: [{ qualifier: 'FGCustAddr', position: 30, label: 'Cidade' }]
+  CustomerCityName;
+  @UI.fieldGroup: [{ qualifier: 'FGCustAddr', position: 40, label: 'CEP' }]
+  CustomerPostalCode;
+  @UI.fieldGroup: [{ qualifier: 'FGCustAddr', position: 50, label: 'Logradouro' }]
+  CustomerStreetName;
+  @UI.fieldGroup: [{ qualifier: 'FGCustAddr', position: 60, label: 'Bairro' }]
+  CustomerDistrictName;
+  @UI.fieldGroup: [{ qualifier: 'FGCustAddr', position: 70, label: 'Município' }]
+  County;
+  @UI.fieldGroup: [{ qualifier: 'FGCustAddr', position: 80, label: 'Telefone 1' }]
+  TelephoneNumber1;
+  @UI.fieldGroup: [{ qualifier: 'FGCustAddr', position: 90, label: 'Telefone 2' }]
+  TelephoneNumber2;
+  @UI.fieldGroup: [{ qualifier: 'FGCustAddr', position: 100, label: 'Fax' }]
+  CustomerFaxNumber;
+  @UI.fieldGroup: [{ qualifier: 'FGCustAddr', position: 110, label: 'Razão Social 1' }]
+  CustomerOrgBPName1;
+  @UI.fieldGroup: [{ qualifier: 'FGCustAddr', position: 120, label: 'Razão Social 2' }]
+  CustomerOrgBPName2;
+
+  @UI.fieldGroup: [{ qualifier: 'FGCustBlock', position: 10, label: 'Bloq. Entrega' }]
+  DeliveryIsBlocked;
+  @UI.fieldGroup: [{ qualifier: 'FGCustBlock', position: 20, label: 'Bloq. Faturamento' }]
+  BillingIsBlockedForCustomer;
+  @UI.fieldGroup: [{ qualifier: 'FGCustBlock', position: 30, label: 'Bloq. Pedido' }]
+  OrderIsBlockedForCustomer;
+  @UI.fieldGroup: [{ qualifier: 'FGCustBlock', position: 40, label: 'Bloq. Contabilização' }]
+  CustomerPostingIsBlocked;
+  @UI.fieldGroup: [{ qualifier: 'FGCustBlock', position: 50, label: 'Pagamento Bloqueado' }]
+  PaymentIsBlockedForCustomer;
+  @UI.fieldGroup: [{ qualifier: 'FGCustBlock', position: 60, label: 'Indicador Exclusão' }]
+  CustomerDeletionIndicator;
+  @UI.fieldGroup: [{ qualifier: 'FGCustBlock', position: 70, label: 'Finalidade Concluída' }]
+  CustIsBusPurpCompleted;
+
+  @UI.fieldGroup: [{ qualifier: 'FGCustSales', position: 10, label: 'Grupo Condição 1' }]
+  CustomerConditionGroup1;
+  @UI.fieldGroup: [{ qualifier: 'FGCustSales', position: 20, label: 'Grupo Condição 2' }]
+  CustomerConditionGroup2;
+  @UI.fieldGroup: [{ qualifier: 'FGCustSales', position: 30, label: 'Grupo Condição 3' }]
+  CustomerConditionGroup3;
+  @UI.fieldGroup: [{ qualifier: 'FGCustSales', position: 40, label: 'Grupo Condição 4' }]
+  CustomerConditionGroup4;
+  @UI.fieldGroup: [{ qualifier: 'FGCustSales', position: 50, label: 'Grupo Condição 5' }]
+  CustomerConditionGroup5;
+  @UI.fieldGroup: [{ qualifier: 'FGCustSales', position: 60, label: 'Região Nielsen' }]
+  NielsenRegion;
+  @UI.fieldGroup: [{ qualifier: 'FGCustSales', position: 70, label: 'Código Setor 1' }]
+  IndustryCode1;
+  @UI.fieldGroup: [{ qualifier: 'FGCustSales', position: 80, label: 'Código Setor 2' }]
+  IndustryCode2;
+  @UI.fieldGroup: [{ qualifier: 'FGCustSales', position: 90, label: 'Ponto de Descarga' }]
+  CustomerHasUnloadingPoint;
+  @UI.fieldGroup: [{ qualifier: 'FGCustSales', position: 100, label: 'Calendário Trabalho' }]
+  CustomerWorkingTimeCalendar;
+  @UI.fieldGroup: [{ qualifier: 'FGCustSales', position: 110, label: 'Regra Data Entrega' }]
+  DeliveryDateTypeRule;
+  @UI.fieldGroup: [{ qualifier: 'FGCustSales', position: 120, label: 'Pagador Alternativo' }]
+  AlternativePayerAccount;
+  @UI.fieldGroup: [{ qualifier: 'FGCustSales', position: 130, label: 'Motivo Pagamento' }]
+  CustomerPaymentReason;
+
+  @UI.fieldGroup: [{ qualifier: 'FGCustAttr', position: 10, label: 'Atributo Livre 01' }]
+  FreeDefinedAttribute01;
+  @UI.fieldGroup: [{ qualifier: 'FGCustAttr', position: 20, label: 'Atributo Livre 02' }]
+  FreeDefinedAttribute02;
+  @UI.fieldGroup: [{ qualifier: 'FGCustAttr', position: 30, label: 'Atributo Livre 03' }]
+  FreeDefinedAttribute03;
+  @UI.fieldGroup: [{ qualifier: 'FGCustAttr', position: 40, label: 'Atributo Livre 04' }]
+  FreeDefinedAttribute04;
+  @UI.fieldGroup: [{ qualifier: 'FGCustAttr', position: 50, label: 'Atributo Livre 05' }]
+  FreeDefinedAttribute05;
+  @UI.fieldGroup: [{ qualifier: 'FGCustAttr', position: 60, label: 'Atributo Livre 06' }]
+  FreeDefinedAttribute06;
+  @UI.fieldGroup: [{ qualifier: 'FGCustAttr', position: 70, label: 'Atributo Livre 07' }]
+  FreeDefinedAttribute07;
+  @UI.fieldGroup: [{ qualifier: 'FGCustAttr', position: 80, label: 'Atributo Livre 08' }]
+  FreeDefinedAttribute08;
+  @UI.fieldGroup: [{ qualifier: 'FGCustAttr', position: 90, label: 'Atributo Livre 09' }]
+  FreeDefinedAttribute09;
+  @UI.fieldGroup: [{ qualifier: 'FGCustAttr', position: 100, label: 'Atributo Livre 10' }]
+  FreeDefinedAttribute10;
+}
