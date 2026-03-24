@@ -1,0 +1,8 @@
+@EndUserText.label: 'Supplier-Customer Balance Report'
+
+// Service Definition for Fiori Elements List Report.
+// After activating: create Service Binding ZSB_SupplierCustBal_V4 (OData V4 - UI)
+// and publish locally in ADT for preview.
+define service ZSD_SupplierCustBal {
+  expose ZC_SupplierCustBal as SupplierCustBal;
+}

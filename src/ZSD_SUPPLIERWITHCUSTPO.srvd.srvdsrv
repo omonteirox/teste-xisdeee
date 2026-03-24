@@ -1,4 +1,0 @@
-@EndUserText.label: 'Supplier Report - Service Definition'
-define service ZSD_SupplierWithCustPO {
-  expose ZC_SupplierWithCustPO as SupplierWithCustPO;
-}
