@@ -2,12 +2,17 @@
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_SRVD" serializer_version="v1.0.0">
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
   <asx:values>
-   <SRVDSRC>
-    <SRVD_0HDNM>ZSD_SUPPLIERCUSTBAL</SRVD_0HDNM>
-    <SRVD_VERS>0002</SRVD_VERS>
-    <DESCRIPT>Supplier-Customer Balance Report</DESCRIPT>
-    <SOURCE/>
-   </SRVDSRC>
+   <SRVD>
+    <NAME>ZSD_SUPPLIERCUSTBAL</NAME>
+    <TYPE>SRVD/SRV</TYPE>
+    <DESCRIPTION>Supplier-Customer Balance Report</DESCRIPTION>
+    <LANGUAGE>E</LANGUAGE>
+    <MASTER_LANGUAGE>E</MASTER_LANGUAGE>
+    <SOURCE_TYPE>ABAP_SOURCE</SOURCE_TYPE>
+    <SOURCE_ORIGIN_DESCRIPTION>ABAP Development Tools</SOURCE_ORIGIN_DESCRIPTION>
+    <SRVD_SOURCE_TYPE>S</SRVD_SOURCE_TYPE>
+    <SRVD_SOURCE_TYPE_DESC>Definition</SRVD_SOURCE_TYPE_DESC>
+   </SRVD>
   </asx:values>
  </asx:abap>
 </abapGit>
