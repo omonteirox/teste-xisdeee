@@ -11,7 +11,7 @@
 // Consumption view for Fiori Elements List Report.
 // Exposes all parameters as filterable filter bar fields.
 // UI annotations are defined in ZME_SupplierCustBal.ddlx.
-define view entity ZC_SupplierCustBal
+define view entity ZC_SUPPLIERCUSTBAL
   with parameters
     @Consumption.filter: {
       selectionType:      #SINGLE,

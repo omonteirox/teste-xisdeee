@@ -3,6 +3,9 @@
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
   <asx:values>
    <SRVDSRC>
+    <SRVD_0HDNM>ZSD_SUPPLIERCUSTBAL</SRVD_0HDNM>
+    <SRVD_VERS>0002</SRVD_VERS>
+    <DESCRIPT>Supplier-Customer Balance Report</DESCRIPT>
     <SOURCE/>
    </SRVDSRC>
   </asx:values>
