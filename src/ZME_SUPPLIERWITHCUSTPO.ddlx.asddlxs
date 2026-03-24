@@ -1,0 +1,184 @@
+@Metadata.layer: #CUSTOMER
+annotate view ZC_SupplierWithCustPO
+  with {
+
+  // ── Entity-level: Header Info ──────────────────────────────────────────
+  @UI.headerInfo: {
+    typeName:       'Fornecedor',
+    typeNamePlural: 'Fornecedores',
+    title:          { type: #STANDARD, value: 'Supplier' },
+    description:    { type: #STANDARD, value: 'SupplierFullName' }
+  }
+
+  // ── Entity-level: Object Page Facets ──────────────────────────────────
+  @UI.facet: [
+    { id: 'HeaderTotals',
+      purpose: #HEADER,
+      type: #DATAPOINT_REFERENCE,
+      targetQualifier: 'TotalGross',
+      position: 10 },
+    { id: 'HeaderTotalNet',
+      purpose: #HEADER,
+      type: #DATAPOINT_REFERENCE,
+      targetQualifier: 'TotalNet',
+      position: 20 },
+    { id: 'HeaderPOCount',
+      purpose: #HEADER,
+      type: #DATAPOINT_REFERENCE,
+      targetQualifier: 'POCount',
+      position: 30 },
+    { id: 'HeaderIsCustomer',
+      purpose: #HEADER,
+      type: #DATAPOINT_REFERENCE,
+      targetQualifier: 'IsCustomer',
+      position: 40 },
+    { id: 'DadosCadastrais',
+      purpose: #STANDARD,
+      type: #FIELDGROUP_REFERENCE,
+      label: 'Dados Cadastrais',
+      targetQualifier: 'DadosCadastrais',
+      position: 10 },
+    { id: 'Endereco',
+      purpose: #STANDARD,
+      type: #FIELDGROUP_REFERENCE,
+      label: 'Endereço',
+      targetQualifier: 'Endereco',
+      position: 20 },
+    { id: 'VinculoCliente',
+      purpose: #STANDARD,
+      type: #FIELDGROUP_REFERENCE,
+      label: 'Vínculo de Cliente',
+      targetQualifier: 'VinculoCliente',
+      position: 30 },
+    { id: 'TotaisCompra',
+      purpose: #STANDARD,
+      type: #FIELDGROUP_REFERENCE,
+      label: 'Totais de Compra',
+      targetQualifier: 'TotaisCompra',
+      position: 40 }
+  ]
+
+  // ── List Report Columns ────────────────────────────────────────────────
+  @UI.lineItem: [{ position: 10, label: 'Fornecedor' }]
+  @UI.selectionField: [{ position: 40 }]
+  Supplier;
+
+  @UI.lineItem: [{ position: 20, label: 'Nome completo' }]
+  SupplierFullName;
+
+  @UI.lineItem: [{ position: 30, label: 'É também Cliente', criticality: 'IsAlsoCustCriticality' }]
+  @UI.dataPoint: #{ qualifier: 'IsCustomer', title: 'É também Cliente', criticality: 'IsAlsoCustCriticality' }
+  @UI.selectionField: [{ position: 30 }]
+  IsAlsoCustomer;
+
+  @UI.lineItem: [{ position: 40, label: 'Total Bruto Comprado' }]
+  @UI.dataPoint: #{ qualifier: 'TotalGross', title: 'Total Bruto Comprado' }
+  TotalGrossAmount;
+
+  @UI.lineItem: [{ position: 50, label: 'Total Líquido Comprado' }]
+  @UI.dataPoint: #{ qualifier: 'TotalNet', title: 'Total Líquido Comprado' }
+  TotalNetAmount;
+
+  @UI.lineItem: [{ position: 60, label: 'Qtd. de Pedidos' }]
+  @UI.dataPoint: #{ qualifier: 'POCount', title: 'Qtd. de Pedidos' }
+  NumberOfPurchaseOrders;
+
+  @UI.lineItem: [{ position: 70, label: 'País' }]
+  Country;
+
+  @UI.lineItem: [{ position: 80, label: 'Setor' }]
+  Industry;
+
+  @UI.lineItem: [{ position: 90, label: 'Bloqueado p/ Compras', criticality: 'PurBlockedCriticality' }]
+  PurchasingIsBlocked;
+
+  @UI.lineItem: [{ position: 100, label: 'Nº Cliente Vinculado' }]
+  Customer;
+
+  // ── Selection Fields (Filters) ─────────────────────────────────────────
+  @UI.selectionField: [{ position: 10 }]
+  CompanyCode;
+
+  @UI.selectionField: [{ position: 20 }]
+  PurchaseOrderDate;
+
+  @UI.selectionField: [{ position: 50 }]
+  PurchasingOrganization;
+
+  // ── Field Groups (Object Page Sections) ───────────────────────────────
+  @UI.fieldGroup: [{ qualifier: 'DadosCadastrais', position: 10, label: 'Nome completo' }]
+  SupplierFullName;
+
+  @UI.fieldGroup: [{ qualifier: 'DadosCadastrais', position: 20, label: 'Grupo de contas' }]
+  SupplierAccountGroup;
+
+  @UI.fieldGroup: [{ qualifier: 'DadosCadastrais', position: 30, label: 'Setor' }]
+  Industry;
+
+  @UI.fieldGroup: [{ qualifier: 'DadosCadastrais', position: 40, label: 'Grupo corporativo' }]
+  SupplierCorporateGroup;
+
+  @UI.fieldGroup: [{ qualifier: 'DadosCadastrais', position: 50, label: 'Telefone' }]
+  PhoneNumber1;
+
+  @UI.fieldGroup: [{ qualifier: 'DadosCadastrais', position: 60, label: 'CNPJ' }]
+  TaxNumber1;
+
+  @UI.fieldGroup: [{ qualifier: 'DadosCadastrais', position: 70, label: 'CPF' }]
+  TaxNumber2;
+
+  @UI.fieldGroup: [{ qualifier: 'DadosCadastrais', position: 80, label: 'Insc. Estadual' }]
+  VATRegistration;
+
+  @UI.fieldGroup: [{ qualifier: 'DadosCadastrais', position: 90, label: 'Bloqueado p/ Compras', criticality: 'PurBlockedCriticality' }]
+  PurchasingIsBlocked;
+
+  @UI.fieldGroup: [{ qualifier: 'DadosCadastrais', position: 100, label: 'Marcado p/ Deleção' }]
+  DeletionIndicator;
+
+  // Endereço
+  @UI.fieldGroup: [{ qualifier: 'Endereco', position: 10, label: 'País' }]
+  Country;
+
+  @UI.fieldGroup: [{ qualifier: 'Endereco', position: 20, label: 'Estado' }]
+  Region;
+
+  @UI.fieldGroup: [{ qualifier: 'Endereco', position: 30, label: 'Cidade' }]
+  CityName;
+
+  @UI.fieldGroup: [{ qualifier: 'Endereco', position: 40, label: 'CEP' }]
+  PostalCode;
+
+  @UI.fieldGroup: [{ qualifier: 'Endereco', position: 50, label: 'Endereço' }]
+  StreetName;
+
+  // Vínculo de Cliente
+  @UI.fieldGroup: [{ qualifier: 'VinculoCliente', position: 10, label: 'Nº Cliente Vinculado' }]
+  Customer;
+
+  @UI.fieldGroup: [{ qualifier: 'VinculoCliente', position: 20, label: 'Nome do Cliente' }]
+  CustomerFullName;
+
+  @UI.fieldGroup: [{ qualifier: 'VinculoCliente', position: 30, label: 'Grupo de contas cliente' }]
+  CustomerAccountGroup;
+
+  // Totais de Compra
+  @UI.fieldGroup: [{ qualifier: 'TotaisCompra', position: 10, label: 'Total Bruto Comprado' }]
+  TotalGrossAmount;
+
+  @UI.fieldGroup: [{ qualifier: 'TotaisCompra', position: 20, label: 'Total Líquido Comprado' }]
+  TotalNetAmount;
+
+  @UI.fieldGroup: [{ qualifier: 'TotaisCompra', position: 30, label: 'Qtd. de Pedidos' }]
+  NumberOfPurchaseOrders;
+
+  @UI.fieldGroup: [{ qualifier: 'TotaisCompra', position: 40, label: 'Moeda' }]
+  DocumentCurrency;
+
+  // ── Hidden fields (criticality helpers — not displayed) ───────────────
+  @UI.hidden: true
+  IsAlsoCustCriticality;
+
+  @UI.hidden: true
+  PurBlockedCriticality;
+}
